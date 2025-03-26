@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.json({ message: "Hello from EC2 + Docker!" });
+    res.json({ message: "Hello from EC2!" });
 });
 
 app.get('/users', async (req, res) => {
