@@ -8,26 +8,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10  # Prevent infinite hangs
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Setup SSH
         run: |
-          echo "EC2_HOST is: ${{ secrets.EC2_HOST }}"
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa -v ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-          cat ~/.ssh/known_hosts
-          
+          ssh-keyscan -t rsa ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy to EC2
         run: |
-          ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -o ServerAliveInterval=60 ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/my-app
-            git pull origin master
+            git fetch origin
+            git reset --hard origin/master
+            
+            # Build if needed then launch
             docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            docker-compose build --pull 
+            docker-compose up -d --force-recreate
           EOF
