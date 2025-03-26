@@ -4,10 +4,8 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        - PLATFORM=linux/amd64,linux/arm64
-    image: hanifnr11/my-app
+      dockerfile: Dockerfile  # Pastikan path Dockerfile sudah benar
+    image: my-app  # Nama image yang akan dibangun secara lokal
     env_file:
       - .env
     ports:
