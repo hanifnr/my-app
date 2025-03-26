@@ -19,7 +19,8 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -t rsa ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
+          chmod 600 ~/.ssh/known_hosts
+          
       - name: Deploy to EC2
         run: |
           ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
