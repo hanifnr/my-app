@@ -24,9 +24,10 @@ jobs:
           
       - name: Deploy to EC2
         run: |
-          ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -tt ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/my-app
-            git pull origin master
+            git fetch origin
+            git reset --hard origin/master  # Force sync dengan remote
             docker-compose down
             docker-compose pull
             docker-compose up -d
